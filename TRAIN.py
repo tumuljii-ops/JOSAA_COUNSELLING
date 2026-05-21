@@ -144,7 +144,6 @@ def train_model(learning_rate, epochs):
     # Store losses
     losses = []
 
-
     # ======================================
     # TRAINING LOOP
     # ======================================
@@ -154,14 +153,12 @@ def train_model(learning_rate, epochs):
         # Forward propagation
         predictions = np.dot(X_train, weights) + bias
 
-
         # MSE Loss
         mse = np.mean(
             (Y_train - predictions) ** 2
         )
 
         losses.append(mse)
-
 
         # Gradients
         dw = (-2 / n_samples) * np.dot(
@@ -173,20 +170,21 @@ def train_model(learning_rate, epochs):
             (Y_train - predictions)
         )
 
-
         # Update parameters
         weights = weights - learning_rate * dw
 
         bias = bias - learning_rate * db
 
+    return weights, bias, losses
 
-    return losses
 
-#---------------hyper_parameter tuning --------------
+ # =====================================================
+ # HYPERPARAMETER TUNING
+ # =====================================================
 
-learning_rates=[0.1,0.01,0.001,0.0001]
-epoch_values=[100,500,1000,5000]
+learning_rates = [0.1, 0.01, 0.001, 0.0001]
 
+epoch_values = [100, 500, 1000, 5000]
 
 best_loss = float("inf")
 
@@ -194,26 +192,34 @@ best_lr = None
 
 best_epochs = None
 
+best_weights = None
+
+best_bias = None
+
+best_losses = None
+
 
 for lr in learning_rates:
 
     for epochs in epoch_values:
 
-        print(
-            f"\nTraining with LR={lr}, Epochs={epochs}"
-        )
+        print(f"\nTraining with LR={lr}, Epochs={epochs}")
 
-        losses = train_model(
+        weights, bias, losses = train_model(
             learning_rate=lr,
             epochs=epochs
         )
 
         final_loss = losses[-1]
 
-        print(
-            f"Final Loss: {final_loss}"
-        )
+        print(f"Final Loss: {final_loss}")
 
+        # Detect exploding loss
+        if np.isnan(final_loss) or np.isinf(final_loss):
+
+            print("Loss exploded. Skipping...")
+
+            continue
 
         # Store best result
         if final_loss < best_loss:
@@ -223,6 +229,29 @@ for lr in learning_rates:
             best_lr = lr
 
             best_epochs = epochs
+
+            best_weights = weights
+
+            best_bias = bias
+
+            best_losses = losses
+            
+ #convergence analysis
+            
+            
+import matplotlib.pyplot as plt
+
+plt.plot(best_losses)
+
+plt.xlabel("Epochs")
+
+plt.ylabel("MSE Loss")
+
+plt.title("Loss Convergence Curve")
+
+plt.show()
+
+#final model summary
 
 
 print("\n===================================")
@@ -234,7 +263,55 @@ print(f"Best Learning Rate: {best_lr}")
 print(f"Best Epochs: {best_epochs}")
 
 print(f"Best Loss: {best_loss}")
-         
+
+
+
+ # =====================================================
+ # TEST PREDICTIONS
+ # =====================================================
+
+Y_pred = np.dot(X_test, best_weights) + best_bias
+
+
+# =====================================================
+# TEST MSE
+# =====================================================
+
+test_mse = np.mean(
+    (Y_test - Y_pred) ** 2
+)
+
+#-----------RMSE SCORE--------------------
+
+print("\nTest MSE:", test_mse)
+
+
+rmse = np.sqrt(test_mse)
+
+print("RMSE:", rmse)
+
+#--------------R**2 SCORE ------------------
+ss_res = np.sum(
+    (Y_test - Y_pred) ** 2
+)
+
+ss_tot = np.sum(
+    (Y_test - np.mean(Y_test)) ** 2
+)
+
+r2_score = 1 - (ss_res / ss_tot)
+
+print("R2 Score:", r2_score)
+
+# =====================================================
+# INVERSE TRANSFORM
+# =====================================================
+
+Y_pred_original = (Y_pred * Y_std) + Y_mean
+
+Y_test_original = (Y_test * Y_std) + Y_mean
+
+
          
     
     
