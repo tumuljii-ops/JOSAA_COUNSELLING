@@ -22,9 +22,6 @@ print("Shape of X is:",X.shape)
 
 print("First 5 rows are:",X.head())
 
-import numpy as np
-import pandas as pd
-
 df=pd.read_csv("josaa_final_dataset.csv")
 
 #spliting data into X(features) AND Y(Target)
@@ -310,6 +307,8 @@ print("R2 Score:", r2_score)
 Y_pred_original = (Y_pred * Y_std) + Y_mean
 
 Y_test_original = (Y_test * Y_std) + Y_mean
+
+#r2 score=0.8467
 
 
          
