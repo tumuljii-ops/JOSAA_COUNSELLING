@@ -26,7 +26,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # COPY BACKEND FILES
 # ============================================
 
-COPY backend/ .
+COPY . .
 
 # ============================================
 # EXPOSE FASTAPI PORT
