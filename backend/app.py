@@ -298,3 +298,5 @@ def predict(user: UserInput):
 
         orient="records"
     )
+    
+    ##https://josaa-counselling.onrender.com/
