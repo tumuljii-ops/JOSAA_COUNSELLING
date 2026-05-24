@@ -1,0 +1,33 @@
+services:
+
+  backend:
+
+    build:
+
+      context: .
+
+      dockerfile: backend/Dockerfile
+
+    ports:
+
+      - "8000:8000"
+
+    container_name: josaa-backend
+
+  frontend:
+
+    build:
+
+      context: .
+
+      dockerfile: Frontend/Dockerfile
+
+    ports:
+
+      - "8501:8501"
+
+    container_name: josaa-frontend
+
+    depends_on:
+
+      - backend

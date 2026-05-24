@@ -95,7 +95,7 @@ if st.button("Predict Colleges"):
 
     response = requests.post(
 
-        "http://127.0.0.1:8000/predict",
+        "http://josaa-backend:8000/predict",
 
         json=user_data
     )

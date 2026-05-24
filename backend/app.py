@@ -172,6 +172,15 @@ def predict(user: UserInput):
     )
 
     # ========================================
+    # RANK DIFFERENCE
+    # ========================================
+
+    temp_df["Rank_Difference"] = abs(
+
+        temp_df["Predicted Closing Rank"] - user.rank
+    )
+
+    # ========================================
     # HIGH CHANCE COLLEGES
     # ========================================
 
@@ -180,9 +189,11 @@ def predict(user: UserInput):
         temp_df["Chance"] == "High"
     ]
 
+    # Best safe colleges
+
     high_df = high_df.sort_values(
 
-        by="Predicted Closing Rank"
+        by="Rank_Difference"
     )
 
     high_df = high_df.head(5)
@@ -196,9 +207,11 @@ def predict(user: UserInput):
         temp_df["Chance"] == "Medium"
     ]
 
+    # Best realistic colleges
+
     medium_df = medium_df.sort_values(
 
-        by="Predicted Closing Rank"
+        by="Rank_Difference"
     )
 
     medium_df = medium_df.head(3)
@@ -212,16 +225,11 @@ def predict(user: UserInput):
         temp_df["Chance"] == "Low"
     ]
 
-    # CLOSEST DREAM COLLEGES
-
-    low_df["distance"] = abs(
-
-        low_df["Predicted Closing Rank"] - user.rank
-    )
+    # Closest dream colleges
 
     low_df = low_df.sort_values(
 
-        by="distance"
+        by="Rank_Difference"
     )
 
     low_df = low_df.head(2)
@@ -238,6 +246,34 @@ def predict(user: UserInput):
 
         low_df
     ])
+
+    # ========================================
+    # FINAL SORTING
+    # ========================================
+
+    chance_order = {
+
+        "High": 1,
+
+        "Medium": 2,
+
+        "Low": 3
+    }
+
+    final_df["Chance_Order"] = final_df[
+
+        "Chance"
+    ].map(chance_order)
+
+    final_df = final_df.sort_values(
+
+        by=[
+
+            "Chance_Order",
+
+            "Rank_Difference"
+        ]
+    )
 
     # ========================================
     # FINAL OUTPUT
